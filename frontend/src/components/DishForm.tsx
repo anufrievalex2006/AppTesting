@@ -188,7 +188,7 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
                         }
                     }></TextInput>
                     {form.watch("imgUrls").map((url: string, i: number) => (
-                        <Group key={i}>
+                        <Group key={`img-${url}-${i}`}>
                             <Text size="sm" flex={1}>{url}</Text>
                             <ActionIcon color="red" onClick={
                                 () => {
