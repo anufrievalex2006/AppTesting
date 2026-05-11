@@ -157,7 +157,7 @@ export const ProductsPage = () => {
                             <img src={url} key={url} alt={viewProduct.name} style={{ maxWidth: 200, maxHeight: 200, objectFit: 'cover', borderRadius: 8 }} onError={(e) => { e.currentTarget.src = 'https://placehold.co/200x200?text=No+Image'; }}></img>
                         ))}
                         <Text><b>Дата создания:</b> {new Date(viewProduct.createdAt).toLocaleString()}</Text>
-                        {viewProduct.updatedAt && (
+                        {viewProduct.updatedAt !== viewProduct.createdAt && (
                             <Text><b>Дата последнего обновления:</b> {new Date(viewProduct.updatedAt).toLocaleString()}</Text>
                         )}
                     </Stack>

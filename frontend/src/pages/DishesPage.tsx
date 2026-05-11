@@ -172,7 +172,7 @@ export const DishesPage = () => {
               <img src={url} key={url} alt={viewDish.name} style={{ maxWidth: 200, maxHeight: 200, objectFit: 'cover', borderRadius: 8 }} onError={(e) => { e.currentTarget.src = 'https://placehold.co/200x200?text=No+Image'; }}></img>
             )) || '—'}
             <Text><b>Дата создания:</b> {new Date(viewDish.createdAt).toLocaleString()}</Text>
-            {viewDish.updatedAt && (
+            {viewDish.updatedAt !== viewDish.createdAt && (
               <Text><b>Дата последнего обновления:</b> {new Date(viewDish.updatedAt).toLocaleString()}</Text>
             )}
           </Stack>
