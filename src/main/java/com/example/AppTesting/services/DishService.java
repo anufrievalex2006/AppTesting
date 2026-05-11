@@ -63,11 +63,11 @@ public class DishService {
         for (DishIngredientDto i: req.getIngredients()) {
             Product p = productRepo.findById(i.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("Продукт с id " + i.getProductId() + " не найден"));
+            if (i.getQuantity() < 0)
+                throw new IllegalArgumentException("Количество ингредиента не может быть отрицательным");
             DishIngredient di = new DishIngredient();
             di.setProduct(p);
             di.setQuantity(i.getQuantity());
-            if (di.getQuantity() < 0)
-                throw new IllegalArgumentException("Количество ингредиента не может быть отрицательным");
             di.setDish(d);
             ingrs.add(di);
         }
@@ -111,11 +111,11 @@ public class DishService {
         for (DishIngredientDto i: req.getIngredients()) {
             Product p = productRepo.findById(i.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("Продукт с id " + i.getProductId() + " не найден"));
+            if (i.getQuantity() < 0)
+                throw new IllegalArgumentException("Количество ингредиента не может быть отрицательным");
             DishIngredient di = new DishIngredient();
             di.setProduct(p);
             di.setQuantity(i.getQuantity());
-            if (di.getQuantity() < 0)
-                throw new IllegalArgumentException("Количество ингредиента не может быть отрицательным");
             di.setDish(d);
             d.getIngredients().add(di);
         }

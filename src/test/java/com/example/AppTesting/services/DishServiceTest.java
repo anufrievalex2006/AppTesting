@@ -189,21 +189,25 @@ class DishServiceTest {
         }
     }
 
-    @Test
-    @DisplayName("Ингредиент без продукта (product == null) игнорируется")
-    void ingredientWithNullProduct_IsSkipped() {
-        DishIngredient broken = new DishIngredient();
-        broken.setProduct(null);
-        broken.setQuantity(100);
-        DishIngredient ok = createIngredient(standard, 100);
+    @Nested
+    @DisplayName("Сломанный ингредиент (с product = null)")
+    class BrokenIngredient {
+        @Test
+        @DisplayName("Ингредиент без продукта (product == null) игнорируется")
+        void ingredientWithNullProduct_IsSkipped() {
+            DishIngredient broken = new DishIngredient();
+            broken.setProduct(null);
+            broken.setQuantity(100);
+            DishIngredient ok = createIngredient(standard, 100);
 
-        NutritionInfoResponse result = dishService.calculateNutrition(List.of(broken, ok));
+            NutritionInfoResponse result = dishService.calculateNutrition(List.of(broken, ok));
 
-        // Только от второго ингредиента
-        assertEquals(250, result.getCalories(), 0.001);
-        assertEquals(20, result.getProtein(), 0.001);
-        assertEquals(15, result.getFats(), 0.001);
-        assertEquals(30, result.getCarbs(), 0.001);
+            // Только от второго ингредиента
+            assertEquals(250, result.getCalories(), 0.001);
+            assertEquals(20, result.getProtein(), 0.001);
+            assertEquals(15, result.getFats(), 0.001);
+            assertEquals(30, result.getCarbs(), 0.001);
+        }
     }
 
     private Product createProduct(float cals, float prot, float fats, float carbs) {
