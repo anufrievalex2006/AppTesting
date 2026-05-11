@@ -3,7 +3,7 @@
 
 # Лаборатория №1
 ## Фронтенд
--> frontend (React+TypeScript)
+-> frontend/*
 ## Бэкенд
 -> src/main/java/com/example/AppTesting/*
 
