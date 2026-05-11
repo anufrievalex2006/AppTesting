@@ -17,6 +17,7 @@ import { useDishes, useDeleteDish } from '../hooks/useDishes';
 import { DishForm } from '../components/DishForm';
 import type { DishCategory, AdditionalFlag } from '../models/enums';
 import { notifications } from '@mantine/notifications';
+import { DISH_CATEGORY_LABELS, FLAG_LABELS } from '../components/labels';
 
 export const DishesPage = () => {
   const [category, setCategory] = useState<DishCategory | undefined>();
@@ -112,12 +113,12 @@ export const DishesPage = () => {
             dishes.map((d) => (
               <Table.Tr key={d.id} onClick={() => setViewDish(d)}>
                 <Table.Td>{d.name}</Table.Td>
-                <Table.Td>{d.category}</Table.Td>
+                <Table.Td>{DISH_CATEGORY_LABELS[d.category] || d.category}</Table.Td>
                 <Table.Td>{d.portionSize}</Table.Td>
                 <Table.Td>
                   {d.calories} / {d.protein} / {d.fats} / {d.carbs}
                 </Table.Td>
-                <Table.Td>{d.flags.join(', ') || '—'}</Table.Td>
+                <Table.Td>{d.flags.map(f => FLAG_LABELS[f] || f).join(', ') || '—'}</Table.Td>
                 <Table.Td>
                   <Group gap="xs">
                     <ActionIcon
@@ -158,14 +159,14 @@ export const DishesPage = () => {
         {viewDish && (
           <Stack>
             <Text><b>Название:</b> {viewDish.name}</Text>
-            <Text><b>Категория:</b> {viewDish.category}</Text>
+            <Text><b>Категория:</b> {DISH_CATEGORY_LABELS[viewDish.category] || viewDish.category}</Text>
             <Text><b>Размер порции:</b> {viewDish.portionSize} г</Text>
             <Text><b>КБЖУ на порцию:</b> {viewDish.calories} / {viewDish.protein} / {viewDish.fats} / {viewDish.carbs}</Text>
             <Text><b>Состав:</b></Text>
             {viewDish.ingredients.map((ing: any, idx: number) => (
               <Text key={idx}>{ing.product.name} — {ing.quantity} г</Text>
             ))}
-            <Text><b>Флаги:</b> {viewDish.flags.join(', ') || '—'}</Text>
+            <Text><b>Флаги:</b> {viewDish.flags.map((f: string) => FLAG_LABELS[f] || f).join(', ') || '—'}</Text>
             <Text><b>Фото:</b></Text>
             {viewDish.imgUrls?.map((url: string) => (
               <img src={url} key={url} alt={viewDish.name} style={{ maxWidth: 200, maxHeight: 200, objectFit: 'cover', borderRadius: 8 }} onError={(e) => { e.currentTarget.src = 'https://placehold.co/200x200?text=No+Image'; }}></img>

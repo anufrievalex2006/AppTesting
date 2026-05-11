@@ -52,6 +52,14 @@ public class ProductService {
         return productRepo.findById(id).orElseThrow();
     }
     public Product create(Product p) {
+        if (p.getCalories() < 0)
+            throw new IllegalArgumentException("Калории не могут быть отрицательными");
+        if (p.getProtein() < 0)
+            throw new IllegalArgumentException("Белки не могут быть отрицательными");
+        if (p.getFats() < 0)
+            throw new IllegalArgumentException("Жиры не могут быть отрицательными");
+        if (p.getCarbs() < 0)
+            throw new IllegalArgumentException("Углеводы не могут быть отрицательными");
         if (p.getProtein() + p.getFats() + p.getCarbs() > 100) {
             throw new IllegalArgumentException("Сумма БЖУ не может превышать 100 г на 100 г продукта");
         }
@@ -69,6 +77,14 @@ public class ProductService {
         p.setProtein(p1.getProtein());
         p.setStatus(p1.getStatus());
         p.setCategory(p1.getCategory());
+        if (p.getCalories() < 0)
+            throw new IllegalArgumentException("Калории не могут быть отрицательными");
+        if (p.getProtein() < 0)
+            throw new IllegalArgumentException("Белки не могут быть отрицательными");
+        if (p.getFats() < 0)
+            throw new IllegalArgumentException("Жиры не могут быть отрицательными");
+        if (p.getCarbs() < 0)
+            throw new IllegalArgumentException("Углеводы не могут быть отрицательными");
         if (p.getProtein() + p.getFats() + p.getCarbs() > 100) {
             throw new IllegalArgumentException("Сумма БЖУ не может превышать 100 г на 100 г продукта");
         }

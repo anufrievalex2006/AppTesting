@@ -17,7 +17,7 @@ const schema = z.object({
     fats: z.number().min(0),
     carbs: z.number().min(0),
     portionSize: z.number().min(1, "Порция должна быть больше 0"),
-    category: z.enum(["DESSERT", "FIRST", "SECOND", "DRINK", "SALAD", "SOUP", "SNACK"]),
+    category: z.enum(["DESSERT", "FIRST", "SECOND", "DRINK", "SALAD", "SOUP", "SNACK"]).optional(),
     flags: z.array(z.enum(["VEGAN", "NO_GLUTEN", "NO_SUGAR"])),
     ingredients: z.array(
         z.object({
@@ -72,7 +72,7 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
             fats: 0,
             carbs: 0,
             portionSize: 300,
-            category: "DESSERT",
+            category: undefined,
             flags: [],
             ingredients: [],
         },
@@ -211,10 +211,12 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
                         }></NumberInput>
                     )}></Controller>
                     <Controller control={form.control} name="category" render={({field}) => (
-                        <Select label="Категория" data={macros.map((m) => ({
+                        <Select label="Категория" clearable data={macros.map((m) => ({
                             value: m.value,
                             label: m.label
-                        }))} value={field.value} onChange={field.onChange}></Select>
+                        }))} value={field.value ?? null} placeholder="Авто из названия" onChange={
+                            (x) => field.onChange(x ?? undefined)
+                        }></Select>
                     )}></Controller>
                 </Group>
                 {form.formState.errors.root && (
@@ -247,6 +249,9 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
                             </ActionIcon>
                         </Group>
                     ))}
+                    {form.formState.errors.ingredients?.root?.message && (
+                        <Text c="red">{form.formState.errors.ingredients.root.message}</Text>
+                    )}
                     <Button variant="light" leftSection={<IconPlus size={16}></IconPlus>} onClick={() => append({
                         productId: 0,
                         quantity: 100

@@ -66,6 +66,8 @@ public class DishService {
             DishIngredient di = new DishIngredient();
             di.setProduct(p);
             di.setQuantity(i.getQuantity());
+            if (di.getQuantity() < 0)
+                throw new IllegalArgumentException("Количество ингредиента не может быть отрицательным");
             di.setDish(d);
             ingrs.add(di);
         }
@@ -112,6 +114,8 @@ public class DishService {
             DishIngredient di = new DishIngredient();
             di.setProduct(p);
             di.setQuantity(i.getQuantity());
+            if (di.getQuantity() < 0)
+                throw new IllegalArgumentException("Количество ингредиента не может быть отрицательным");
             di.setDish(d);
             d.getIngredients().add(di);
         }
@@ -142,6 +146,8 @@ public class DishService {
     public NutritionInfoResponse calculateNutrition(List<DishIngredient> ingrs) {
         float cals = 0, protein = 0, fats = 0, carbs = 0;
         for (DishIngredient di: ingrs) {
+            if (di.getQuantity() < 0)
+                throw new IllegalArgumentException("Количество ингредиента не может быть отрицательным");
             Product p = di.getProduct();
             if (p == null) continue;
 

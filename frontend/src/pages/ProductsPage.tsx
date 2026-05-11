@@ -5,6 +5,7 @@ import { ActionIcon, Button, Group, Modal, MultiSelect, Select, Stack, Table, Te
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { ProductForm } from "../components/ProductForm";
 import { notifications } from "@mantine/notifications";
+import { COOKING_STATUS_LABELS, FLAG_LABELS, PRODUCT_CATEGORY_LABELS } from "../components/labels";
 
 export const ProductsPage = () => {
     const [category, setCategory] = useState<ProductCategory | undefined>();
@@ -104,10 +105,10 @@ export const ProductsPage = () => {
                             prods.map(p => (
                                 <Table.Tr key={p.id} onClick={() => setViewProduct(p)}>
                                     <Table.Td>{p.name}</Table.Td>
-                                    <Table.Td>{p.category}</Table.Td>
+                                    <Table.Td>{PRODUCT_CATEGORY_LABELS[p.category] || p.category}</Table.Td>
                                     <Table.Td>{p.calories}</Table.Td>
                                     <Table.Td>{p.protein} / {p.fats} / {p.carbs}</Table.Td>
-                                    <Table.Td>{p.flags.join(', ') || '—'}</Table.Td>
+                                    <Table.Td>{p.flags.map(f => FLAG_LABELS[f] || f).join(', ') || '—'}</Table.Td>
                                     <Table.Td>
                                         <Group gap="xs">
                                             <ActionIcon color="blue" onClick={(e) => {
@@ -146,11 +147,11 @@ export const ProductsPage = () => {
                 {viewProduct && (
                     <Stack>
                         <Text><b>Название:</b> {viewProduct.name}</Text>
-                        <Text><b>Категория:</b> {viewProduct.category}</Text>
-                        <Text><b>Статус:</b> {viewProduct.status}</Text>
+                        <Text><b>Категория:</b> {PRODUCT_CATEGORY_LABELS[viewProduct.category] || viewProduct.category}</Text>
+                        <Text><b>Статус:</b> {COOKING_STATUS_LABELS[viewProduct.status] || viewProduct.status}</Text>
                         <Text><b>КБЖУ (100 г):</b> {viewProduct.calories} / {viewProduct.protein} / {viewProduct.fats} / {viewProduct.carbs}</Text>
                         <Text><b>Состав:</b> {viewProduct.composition || "-"}</Text>
-                        <Text><b>Доп флаги:</b> {viewProduct.flags.join(", ") || "-"}</Text>
+                        <Text><b>Доп флаги:</b> {viewProduct.flags.map((f: string) => FLAG_LABELS[f] || f).join(", ") || "-"}</Text>
                         <Text><b>Фото:</b></Text>
                         {viewProduct.imgUrls?.map((url: string) => (
                             <img src={url} key={url} alt={viewProduct.name} style={{ maxWidth: 200, maxHeight: 200, objectFit: 'cover', borderRadius: 8 }} onError={(e) => { e.currentTarget.src = 'https://placehold.co/200x200?text=No+Image'; }}></img>
