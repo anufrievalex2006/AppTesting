@@ -157,7 +157,7 @@ export const ProductForm = ({product, onClose}: Props) => {
                         } error={form.formState.errors.fats?.message}></NumberInput>
                     )}></Controller>
                     <Controller name="carbs" control={form.control} render={({field}) => (
-                        <NumberInput label="Угли (в 100г)" value={field.value} onChange={
+                        <NumberInput label="Углеводы (в 100г)" value={field.value} onChange={
                             (x) => field.onChange(x === "" ? 0 : x)
                         } error={form.formState.errors.carbs?.message}></NumberInput>
                     )}></Controller>
