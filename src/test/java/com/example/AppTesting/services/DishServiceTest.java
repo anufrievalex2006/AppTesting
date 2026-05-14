@@ -5,6 +5,7 @@ import com.example.AppTesting.models.api.DishIngredient;
 import com.example.AppTesting.models.api.Product;
 import com.example.AppTesting.repos.DishRepo;
 import com.example.AppTesting.repos.ProductRepo;
+import com.example.AppTesting.utilities.ServiceForTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,11 +38,13 @@ class DishServiceTest {
     private ProductRepo prodRepo;
     @InjectMocks
     private DishService dishService;
+    private ServiceForTests utils;
 
     private Product standard;
     @BeforeEach
     void setUp() {
-        standard = createProduct(250, 20, 15, 30);
+        utils = new ServiceForTests();
+        standard = utils.createProduct(250, 20, 15, 30);
     }
 
     @Nested
@@ -66,7 +69,7 @@ class DishServiceTest {
         @Test
         @DisplayName("Продукт с нормальными значениями, количество 100 г: КБЖУ = 100% от значений продукта")
         void singleIngredient_100g_ReturnsExactProductValues() {
-            DishIngredient ingredient = createIngredient(standard, 100);
+            DishIngredient ingredient = utils.createIngredient(standard, 100);
 
             NutritionInfoResponse result = dishService.calculateNutrition(List.of(ingredient));
 
@@ -88,7 +91,7 @@ class DishServiceTest {
                                                                     float expectedProt,
                                                                     float expectedFats,
                                                                     float expectedCarbs) {
-            DishIngredient ingredient = createIngredient(standard, quantity);
+            DishIngredient ingredient = utils.createIngredient(standard, quantity);
 
             NutritionInfoResponse result = dishService.calculateNutrition(List.of(ingredient));
 
@@ -105,9 +108,9 @@ class DishServiceTest {
         @Test
         @DisplayName("Два ингредиента - корректное суммирование КБЖУ")
         void multipleIngredients_SumsCorrectly() {
-            Product prod1 = createProduct(100, 10, 5, 20);
-            DishIngredient ing1 = createIngredient(prod1, 150);
-            DishIngredient ing2 = createIngredient(standard, 50);
+            Product prod1 = utils.createProduct(100, 10, 5, 20);
+            DishIngredient ing1 = utils.createIngredient(prod1, 150);
+            DishIngredient ing2 = utils.createIngredient(standard, 50);
 
             NutritionInfoResponse result = dishService.calculateNutrition(List.of(ing1, ing2));
 
@@ -126,7 +129,7 @@ class DishServiceTest {
         @Test
         @DisplayName("Отрицательное количество (-0.01 г) -> ошибка")
         void negativeQuantity_ThrowsAnError() {
-            DishIngredient ingredient = createIngredient(standard, -0.01f);
+            DishIngredient ingredient = utils.createIngredient(standard, -0.01f);
 
             assertThrows(IllegalArgumentException.class, () -> dishService.calculateNutrition(List.of(ingredient)));
         }
@@ -134,7 +137,7 @@ class DishServiceTest {
         @Test
         @DisplayName("Количество = 0 г -> нулевое КБЖУ")
         void zeroQuantity_ReturnsAllZeros() {
-            DishIngredient ingredient = createIngredient(standard, 0);
+            DishIngredient ingredient = utils.createIngredient(standard, 0);
 
             NutritionInfoResponse result = dishService.calculateNutrition(List.of(ingredient));
 
@@ -149,8 +152,8 @@ class DishServiceTest {
         @Test
         @DisplayName("Продукт с нулевыми КБЖУ (как вода) -> нулевое КБЖУ")
         void productWithZeroNutrients_ReturnsZero() {
-            Product water = createProduct(0, 0, 0, 0);
-            DishIngredient ingredient = createIngredient(water, 200);
+            Product water = utils.createProduct(0, 0, 0, 0);
+            DishIngredient ingredient = utils.createIngredient(water, 200);
 
             NutritionInfoResponse result = dishService.calculateNutrition(List.of(ingredient));
 
@@ -165,7 +168,7 @@ class DishServiceTest {
         @Test
         @DisplayName("Малое количество продукта (0.01 г) -> верный расчет КБЖУ")
         void tinyQuantity_ReturnsCorrectValues() {
-            DishIngredient ingredient = createIngredient(standard, 0.01f);
+            DishIngredient ingredient = utils.createIngredient(standard, 0.01f);
 
             NutritionInfoResponse result = dishService.calculateNutrition(List.of(ingredient));
 
@@ -178,7 +181,7 @@ class DishServiceTest {
         @Test
         @DisplayName("Очень большое количество (10000 г) -> КБЖУ пропорционально увеличиваются")
         void veryLargeQuantity_ScalesCorrectly() {
-            DishIngredient ingredient = createIngredient(standard, 10000);
+            DishIngredient ingredient = utils.createIngredient(standard, 10000);
 
             NutritionInfoResponse result = dishService.calculateNutrition(List.of(ingredient));
 
@@ -198,7 +201,7 @@ class DishServiceTest {
             DishIngredient broken = new DishIngredient();
             broken.setProduct(null);
             broken.setQuantity(100);
-            DishIngredient ok = createIngredient(standard, 100);
+            DishIngredient ok = utils.createIngredient(standard, 100);
 
             NutritionInfoResponse result = dishService.calculateNutrition(List.of(broken, ok));
 
@@ -208,21 +211,5 @@ class DishServiceTest {
             assertEquals(15, result.getFats(), 0.001);
             assertEquals(30, result.getCarbs(), 0.001);
         }
-    }
-
-    private Product createProduct(float cals, float prot, float fats, float carbs) {
-        Product p = new Product();
-        p.setCalories(cals);
-        p.setProtein(prot);
-        p.setFats(fats);
-        p.setCarbs(carbs);
-        return p;
-    }
-
-    private DishIngredient createIngredient(Product product, float quantity) {
-        DishIngredient di = new DishIngredient();
-        di.setProduct(product);
-        di.setQuantity(quantity);
-        return di;
     }
 }
