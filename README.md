@@ -1,5 +1,5 @@
 # AppTesting
-Система для покрытия тестами
+Система для покрытия тестами, ниже даны ссылки на файлы-реализации лабораторных работ
 
 # Лаборатория №1
 ## Фронтенд
@@ -9,3 +9,6 @@
 
 # Лаборатория №2 (юнит-тесты)
 -> src/test/java/com/example/AppTesting/services/DishServiceTest.java
+
+# Лаборатория №3 (интеграционные/API-тесты)
+-> src/test/java/com/example/AppTesting/controllers/*
