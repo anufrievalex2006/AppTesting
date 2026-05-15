@@ -37,6 +37,16 @@ public class Helper {
         return dto;
     }
 
+    public DishDto buildDishWithIngredients(String name, float portion, DishCategory category,
+                                            List<DishIngredientDto> ingredients) {
+        DishDto dto = new DishDto();
+        dto.setName(name);
+        dto.setPortionSize(portion);
+        dto.setCategory(category);
+        dto.setIngredients(ingredients != null ? ingredients : List.of());
+        return dto;
+    }
+
     public Product createValidProduct(String name) {
         Product p = new Product();
         p.setName(name != null ? name : "Тест");
