@@ -24,7 +24,7 @@ export class ProductsPage extends BasePage {
 
     async openCreateModal() {
         await this.createButton().click();
-        await expect(this.nameInput()).toBeVisible({ timeout: 1500 });
+        await expect(this.nameInput()).toBeVisible();
         // await this.page.waitForTimeout(800);
     }
 
@@ -77,6 +77,10 @@ export class ProductsPage extends BasePage {
     async submitForm() {
         await this.submitButton().click();
         await expect(this.page.getByRole('dialog')).toBeHidden();
+    }
+
+    async clickSubmit() {
+        await this.submitButton().click();
     }
 
     async closeModal() {

@@ -14,18 +14,18 @@ export class DishesPage extends BasePage {
 
     async openCreateModal() {
         await this.createButton().click();
-        await expect(this.nameInput()).toBeVisible({ timeout: 10000 });
-        await this.page.waitForTimeout(300);
+        await expect(this.nameInput()).toBeVisible({ timeout: 1500 });
+        // await this.page.waitForTimeout(300);
     }
 
     async fillDishName(name: string) {
         await this.nameInput().fill(name);
-        await this.page.waitForTimeout(400);
+        // await this.page.waitForTimeout(400);
     }
 
     async addIngredient(productName: string, quantity: number = 100) {
         await this.addIngredientButton().click();
-        await this.page.waitForTimeout(500);
+        // await this.page.waitForTimeout(500);
 
         const productSelect = this.page.getByTestId('dish-product-select').last();
         await productSelect.click();
@@ -33,12 +33,12 @@ export class DishesPage extends BasePage {
 
         const qtyInput = this.page.getByTestId('dish-quantity-select').last();
         await qtyInput.fill(quantity.toString());
-        await this.page.waitForTimeout(300);
+        // await this.page.waitForTimeout(300);
     }
 
     async submitForm() {
         await this.submitButton().click();
-        await expect(this.page.getByRole('dialog')).toBeHidden({ timeout: 12000 }).catch(() => {});
+        await expect(this.page.getByRole('dialog')).toBeHidden({ timeout: 1500 }).catch(() => {});
     }
 
     async clickSubmit() {

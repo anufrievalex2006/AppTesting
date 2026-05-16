@@ -29,10 +29,10 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
 
                 await dishesPage.openCreateModal();
                 await dishesPage.fillDishName(rawName);
-                await dishesPage.addIngredient('Вода', 200);
+                await dishesPage.addIngredient('Картофель', 250);
                 await dishesPage.submitForm();
 
-                await expect(dishesPage.page.getByText(displayedName)).toBeVisible({ timeout: 15000 });
+                await expect(dishesPage.page.getByText(displayedName)).toBeVisible();
 
                 const row = dishesPage.getDishRow(displayedName);
                 await expect(row).toContainText(category);
@@ -45,27 +45,29 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
 
             await dishesPage.openCreateModal();
             await dishesPage.fillDishName(rawName);
-            await dishesPage.addIngredient('Вода', 300);
+            await dishesPage.addIngredient('Вода', 500);
+            await dishesPage.addIngredient('Картофель', 200);
+            await dishesPage.addIngredient('Мясо', 200);
+            await dishesPage.addIngredient('Свекла', 150);
             await dishesPage.submitForm();
 
             // Исходное имя с макросом НЕ должно отображаться
             await expect(dishesPage.page.getByText(rawName)).not.toBeVisible();
             // Очищенное имя должно отображаться
-            await expect(dishesPage.page.getByText(displayedName)).toBeVisible({ timeout: 15000 });
+            await expect(dishesPage.page.getByText(displayedName)).toBeVisible();
         });
 
         test('Категория из поля формы приоритетнее макроса', async () => {
-            // По ТЗ: если задать категорию в поле И в макросе — побеждает поле
             const rawName = `!первое Тест приоритета ${Date.now()}`;
             const displayedName = rawName.replace('!первое', '').trim();
 
             await dishesPage.openCreateModal();
             await dishesPage.fillDishName(rawName);
-            await dishesPage.selectCategory('Десерт'); // поле = Десерт, макрос = Первое
+            await dishesPage.selectCategory('Десерт');
             await dishesPage.addIngredient('Вода', 200);
             await dishesPage.submitForm();
 
-            await expect(dishesPage.page.getByText(displayedName)).toBeVisible({ timeout: 15000 });
+            await expect(dishesPage.page.getByText(displayedName)).toBeVisible();
             const row = dishesPage.getDishRow(displayedName);
             await expect(row).toContainText('Десерт');
             await expect(row).not.toContainText('Первое');
@@ -84,10 +86,11 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
                 await dishesPage.openCreateModal();
                 await dishesPage.fillDishName(dishName);
                 await dishesPage.selectCategory(category);
-                await dishesPage.addIngredient('Вода', 200);
+                await dishesPage.addIngredient('Мясо', 200);
+                await dishesPage.addIngredient('Свекла', 350);
                 await dishesPage.submitForm();
 
-                await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 15000 });
+                await expect(dishesPage.page.getByText(dishName)).toBeVisible();
                 const row = dishesPage.getDishRow(dishName);
                 await expect(row).toContainText(category);
             });
@@ -105,7 +108,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
         await dishesPage.addIngredient('Вода', 200);
         await dishesPage.submitForm();
 
-        await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 15000 });
+        await expect(dishesPage.page.getByText(dishName)).toBeVisible();
         // КБЖУ воды = 0, поэтому в строке должны быть нули
         const row = dishesPage.getDishRow(dishName);
         await expect(row).toContainText('0');
@@ -118,10 +121,11 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
         await dishesPage.fillDishName(dishName);
         await dishesPage.selectCategory('Второе');
         await dishesPage.addIngredient('Вода', 100);
-        await dishesPage.addIngredient('Вода', 50); // добавляем второй ингредиент
+        await dishesPage.addIngredient('Картофель', 50);
+        await dishesPage.addIngredient('Мясо', 600);
         await dishesPage.submitForm();
 
-        await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 15000 });
+        await expect(dishesPage.page.getByText(dishName)).toBeVisible();
     });
 
     // ===================== ВАЛИДАЦИЯ — СОЗДАНИЕ =====================
@@ -137,7 +141,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
 
             await expect(
                 dishesPage.page.getByText('Добавьте хотя бы один продукт')
-            ).toBeVisible({ timeout: 5000 });
+            ).toBeVisible();
 
             // Модалка остаётся открытой
             await expect(dishesPage.page.getByRole('dialog')).toBeVisible();
@@ -191,7 +195,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await dishesPage.selectCategory('Второе');
             await dishesPage.addIngredient('Вода', 100);
             await dishesPage.submitForm();
-            await expect(dishesPage.page.getByText(originalName)).toBeVisible({ timeout: 15000 });
+            await expect(dishesPage.page.getByText(originalName)).toBeVisible();
 
             // Редактируем
             const row = dishesPage.getDishRow(originalName);
@@ -201,7 +205,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await dishesPage.fillDishName(updatedName);
             await dishesPage.submitForm();
 
-            await expect(dishesPage.page.getByText(updatedName)).toBeVisible({ timeout: 15000 });
+            await expect(dishesPage.page.getByText(updatedName)).toBeVisible();
             await expect(dishesPage.page.getByText(originalName)).not.toBeVisible();
         });
 
@@ -211,8 +215,9 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await dishesPage.fillDishName(dishName);
             await dishesPage.selectCategory('Суп');
             await dishesPage.addIngredient('Вода', 200);
+            await dishesPage.addIngredient('Картофель', 450);
             await dishesPage.submitForm();
-            await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 15000 });
+            await expect(dishesPage.page.getByText(dishName)).toBeVisible();
 
             // Открываем редактирование
             const row = dishesPage.getDishRow(dishName);
@@ -236,15 +241,14 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await dishesPage.fillDishName(dishName);
             await dishesPage.selectCategory('Перекус');
             await dishesPage.addIngredient('Вода', 100);
+            await dishesPage.addIngredient('Свекла', 40);
             await dishesPage.submitForm();
-            await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 15000 });
+            await expect(dishesPage.page.getByText(dishName)).toBeVisible();
 
             // Удаляем
             const row = dishesPage.getDishRow(dishName);
-            await row.getByRole('button').nth(1).click(); // кнопка удаления
-
-            // Подтверждаем confirm-диалог
             dishesPage.page.once('dialog', dialog => dialog.accept());
+            await row.getByRole('button').nth(1).click(); // кнопка удаления
 
             await expect(dishesPage.page.getByText(dishName)).not.toBeVisible({ timeout: 10000 });
         });
@@ -262,16 +266,16 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await dishesPage.selectCategory('Суп');
             await dishesPage.addIngredient('Вода', 300);
             await dishesPage.submitForm();
-            await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 15000 });
+            await expect(dishesPage.page.getByText(dishName)).toBeVisible();
 
             // Ищем по уникальной части
             await dishesPage.page.getByPlaceholder('Введите название...').fill(uniquePart);
-            await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 5000 });
+            await expect(dishesPage.page.getByText(dishName)).toBeVisible();
         });
 
         test('Поиск по несуществующему названию — таблица пустая', async () => {
             await dishesPage.page.getByPlaceholder('Введите название...').fill('xyzНесуществующееБлюдо99999');
-            await expect(dishesPage.page.getByRole('row').nth(1)).not.toBeVisible({ timeout: 3000 }).catch(() => {
+            await expect(dishesPage.page.getByRole('row').nth(1)).not.toBeVisible().catch(() => {
                 // Допустимо если строк 0 или таблица показывает пустое состояние
             });
         });
@@ -284,13 +288,13 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await dishesPage.selectCategory('Десерт');
             await dishesPage.addIngredient('Вода', 100);
             await dishesPage.submitForm();
-            await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 15000 });
+            await expect(dishesPage.page.getByText(dishName)).toBeVisible();
 
             // Выбираем фильтр по категории Десерт
-            await dishesPage.page.getByLabel('Категория').click();
+            await dishesPage.page.getByRole('textbox', { name: 'Категория' }).click();
             await dishesPage.page.getByRole('option', { name: 'Десерт', exact: true }).click();
 
-            await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 5000 });
+            await expect(dishesPage.page.getByText(dishName)).toBeVisible();
         });
     });
 
@@ -303,14 +307,16 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
         await dishesPage.fillDishName(dishName);
         await dishesPage.selectCategory('Второе');
         await dishesPage.addIngredient('Вода', 150);
+        await dishesPage.addIngredient('Свекла', 200);
+        await dishesPage.addIngredient('Мясо', 200);
         await dishesPage.submitForm();
-        await expect(dishesPage.page.getByText(dishName)).toBeVisible({ timeout: 15000 });
+        await expect(dishesPage.page.getByText(dishName)).toBeVisible();
 
         // Кликаем по строке (не по кнопкам)
         await dishesPage.getDishRow(dishName).click();
 
         // Открывается модалка просмотра с названием блюда
-        await expect(dishesPage.page.getByText('Просмотр блюда')).toBeVisible({ timeout: 5000 });
-        await expect(dishesPage.page.getByText(dishName)).toBeVisible();
+        await expect(dishesPage.page.getByText('Просмотр блюда')).toBeVisible();
+        await expect(dishesPage.page.getByRole('dialog').getByText(dishName)).toBeVisible();
     });
 });

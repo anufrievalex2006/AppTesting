@@ -83,12 +83,12 @@ test.describe('Страница продуктов - CRUD + валидация',
             { cal: 0,   prot: 1,  fat: 0,  carb: 0,  desc: 'Минимальные положительные белки' },
             { cal: 0,   prot: 0,  fat: 1,  carb: 0,  desc: 'Минимальные положительные жиры' },
             { cal: 0,   prot: 0,  fat: 0,  carb: 1,  desc: 'Минимальные положительные углеводы' },
-            { cal: 500, prot: 33, fat: 33, carb: 33, desc: 'Максимально допустимая сумма БЖУ (99)' },
-            { cal: 500, prot: 34, fat: 33, carb: 33, desc: 'Сумма БЖУ ровно 100' },
+            { cal: 500, prot: 33, fat: 33, carb: 33, desc: 'Сумма БЖУ близка к максимальной (99)' },
+            { cal: 500, prot: 34, fat: 33, carb: 33, desc: 'Сумма БЖУ = максимум (100)' },
         ];
 
         for (const tc of testCases) {
-            test(`BVA: ${tc.desc}`, async () => {
+            test(`Анализ граничных значений: ${tc.desc}`, async () => {
                 const p = generateValidProduct(`-bva-${tc.cal}-${tc.prot}`);
 
                 await productsPage.openCreateModal();
@@ -114,7 +114,7 @@ test.describe('Страница продуктов - CRUD + валидация',
 
             await productsPage.openCreateModal();
             await productsPage.fillProductForm(invalid);
-            await productsPage.submitForm();
+            await productsPage.clickSubmit();
 
             await expect(
                 productsPage.page.getByText('Сумма БЖУ не может быть больше 100 г на 100 г продукта')
@@ -130,7 +130,7 @@ test.describe('Страница продуктов - CRUD + валидация',
             await productsPage.proteinInput().fill('10');
             await productsPage.fatsInput().fill('5');
             await productsPage.carbsInput().fill('20');
-            await productsPage.submitForm();
+            await productsPage.clickSubmit();
 
             await expect(
                 productsPage.page.getByText('как минимум 2 символа')
@@ -146,7 +146,7 @@ test.describe('Страница продуктов - CRUD + валидация',
             await productsPage.proteinInput().fill('10');
             await productsPage.fatsInput().fill('5');
             await productsPage.carbsInput().fill('20');
-            await productsPage.submitForm();
+            await productsPage.clickSubmit();
 
             await expect(
                 productsPage.page.getByText('как минимум 2 символа')
@@ -183,7 +183,9 @@ test.describe('Страница продуктов - CRUD + валидация',
 
             await productsPage.expectNotification('Продукт успешно обновлен');
             await expect(productsPage.page.getByText(updatedName)).toBeVisible();
-            await expect(productsPage.page.getByText(product.name)).not.toBeVisible();
+            await expect(productsPage.page.getByText(product.name, {
+                exact: true
+            })).not.toBeVisible();
         });
 
         test('Обновление КБЖУ продукта', async () => {
@@ -217,7 +219,7 @@ test.describe('Страница продуктов - CRUD + валидация',
             await productsPage.proteinInput().fill('50');
             await productsPage.fatsInput().fill('40');
             await productsPage.carbsInput().fill('30');
-            await productsPage.submitForm();
+            await productsPage.clickSubmit();
 
             await expect(
                 productsPage.page.getByText('Сумма БЖУ не может быть больше 100 г на 100 г продукта')
@@ -278,7 +280,7 @@ test.describe('Страница продуктов - CRUD + валидация',
             await productsPage.submitForm();
             await productsPage.expectNotification('Продукт успешно создан');
 
-            await productsPage.page.getByLabel('Категория').click();
+            await productsPage.page.getByRole('textbox', { name: 'Категория' }).click();
             await productsPage.page.getByRole('option', { name: 'Сладости', exact: true }).click();
 
             await expect(productsPage.page.getByText(product.name)).toBeVisible({ timeout: 5000 });
@@ -292,7 +294,7 @@ test.describe('Страница продуктов - CRUD + валидация',
             await productsPage.submitForm();
             await productsPage.expectNotification('Продукт успешно создан');
 
-            await productsPage.page.getByLabel('Статус').click();
+            await productsPage.page.getByRole('textbox', { name: 'Статус' }).click();
             await productsPage.page.getByRole('option', { name: 'Полуфабрикат' }).click();
 
             await expect(productsPage.page.getByText(product.name)).toBeVisible({ timeout: 5000 });
@@ -302,7 +304,7 @@ test.describe('Страница продуктов - CRUD + валидация',
 
         for (const sortOption of sortOptions) {
             test(`Сортировка "${sortOption}" не роняет страницу`, async () => {
-                await productsPage.page.getByLabel('Сортировка').click();
+                await productsPage.page.getByRole('textbox', { name: 'Сортировка' }).click();
                 await productsPage.page.getByRole('option', { name: sortOption }).click();
 
                 // Страница не упала — таблица видна
@@ -323,8 +325,7 @@ test.describe('Страница продуктов - CRUD + валидация',
 
         // Кликаем по строке (не по кнопкам)
         await productsPage.getProductRow(product.name).click();
-
         await expect(productsPage.page.getByText('Просмотр продукта')).toBeVisible({ timeout: 5000 });
-        await expect(productsPage.page.getByText(product.name)).toBeVisible();
+        await expect(productsPage.page.getByRole('dialog').getByText(product.name)).toBeVisible();
     });
 });
