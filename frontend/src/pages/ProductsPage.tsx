@@ -79,7 +79,7 @@ export const ProductsPage = () => {
                         { value: 'fats', label: 'По жирам' },
                         { value: 'carbs', label: 'По углеводам' }
                     ]}></Select>
-                    <Button onClick={() => {
+                    <Button data-testid="product-create-button" onClick={() => {
                         setEditProduct(null);
                         setOpened(true);
                     }}>+ Новый продукт</Button>
@@ -103,7 +103,7 @@ export const ProductsPage = () => {
                             </Table.Tr>
                         ) : (
                             prods.map(p => (
-                                <Table.Tr key={p.id} onClick={() => setViewProduct(p)}>
+                                <Table.Tr key={p.id} data-testid={`product-row-${p.id}`} onClick={() => setViewProduct(p)}>
                                     <Table.Td>{p.name}</Table.Td>
                                     <Table.Td>{PRODUCT_CATEGORY_LABELS[p.category] || p.category}</Table.Td>
                                     <Table.Td>{p.calories}</Table.Td>

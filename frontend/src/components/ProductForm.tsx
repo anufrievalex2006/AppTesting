@@ -104,7 +104,7 @@ export const ProductForm = ({product, onClose}: Props) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
             <Stack gap="md">
                 <Controller name="imgUrls" control={form.control} render={() => <></>}></Controller>
-                <TextInput label="Название" {...form.register("name")} error={form.formState.errors.name?.message}></TextInput>
+                <TextInput label="Название" data-testid="product-name-input" {...form.register("name")} error={form.formState.errors.name?.message}></TextInput>
                 <Stack>
                     <TextInput label="Добавить URL изображения (для добавления в список нажмите Enter!)" value={newImgUrl} onChange={
                         (e) => setNewImgUrl(e.target.value)
@@ -125,7 +125,7 @@ export const ProductForm = ({product, onClose}: Props) => {
                                 setNewImgUrl("");
                             }
                         }
-                    }></TextInput>
+                    } data-testid="product-imgUrls-input"></TextInput>
                     {form.watch("imgUrls").map((url: string, i: number) => (
                         <Group key={i}>
                             <Text size="sm" flex={1}>{url}</Text>
@@ -142,28 +142,28 @@ export const ProductForm = ({product, onClose}: Props) => {
                 </Stack>
                 <Group grow>
                     <Controller name="calories" control={form.control} render={({field}) => (
-                        <NumberInput label="Калории (ккал в 100г)" value={field.value} onChange={
+                        <NumberInput data-testid="product-calories-input" label="Калории (ккал в 100г)" value={field.value} onChange={
                             (x) => field.onChange(x === "" ? 0 : x)
                         } error={form.formState.errors.calories?.message}></NumberInput>
                     )}></Controller>
                     <Controller name="protein" control={form.control} render={({field}) => (
-                        <NumberInput label="Белки (в 100г)" value={field.value} onChange={
+                        <NumberInput data-testid="product-protein-input" label="Белки (в 100г)" value={field.value} onChange={
                             (x) => field.onChange(x === "" ? 0 : x)
                         } error={form.formState.errors.protein?.message}></NumberInput>
                     )}></Controller>
                     <Controller name="fats" control={form.control} render={({field}) => (
-                        <NumberInput label="Жиры (в 100г)" value={field.value} onChange={
+                        <NumberInput data-testid="product-fats-input" label="Жиры (в 100г)" value={field.value} onChange={
                             (x) => field.onChange(x === "" ? 0 : x)
                         } error={form.formState.errors.fats?.message}></NumberInput>
                     )}></Controller>
                     <Controller name="carbs" control={form.control} render={({field}) => (
-                        <NumberInput label="Углеводы (в 100г)" value={field.value} onChange={
+                        <NumberInput data-testid="product-carbs-input" label="Углеводы (в 100г)" value={field.value} onChange={
                             (x) => field.onChange(x === "" ? 0 : x)
                         } error={form.formState.errors.carbs?.message}></NumberInput>
                     )}></Controller>
                 </Group>
                 <Controller name="category" control={form.control} render={({field}) => (
-                    <Select label="Категория" data={[
+                    <Select data-testid="product-category-select" label="Категория" data={[
                         { value: "FROZEN", label: "Замороженный" },
                         { value: "MEAT", label: "Мясной" },
                         { value: "VEGETABLES", label: "Овощи" },
@@ -176,14 +176,14 @@ export const ProductForm = ({product, onClose}: Props) => {
                     ]} value={field.value} onChange={field.onChange}></Select>
                 )}></Controller>
                 <Controller name="status" control={form.control} render={({field}) => (
-                    <Select label="Необходимость готовки" data={[
+                    <Select data-testid="product-status-select" label="Необходимость готовки" data={[
                         { value: "READY", label: "Готовый к употреблению" },
                         { value: "SEMI_FINISHED", label: "Полуфабрикат" },
                         { value: "NOT_DONE", label: "Требует приготовления" },
                     ]} value={field.value} onChange={field.onChange}></Select>
                 )}></Controller>
                 <Controller name="flags" control={form.control} render={({field}) => (
-                    <MultiSelect label="Дополнительные флаги" data={[
+                    <MultiSelect data-testid="product-flags-multiselect" label="Дополнительные флаги" data={[
                         { value: "VEGAN", label: "Веган" },
                         { value: "NO_GLUTEN", label: "Без глютена" },
                         { value: "NO_SUGAR", label: "Без сахара" },
@@ -191,10 +191,10 @@ export const ProductForm = ({product, onClose}: Props) => {
                 )}></Controller>
                 <Textarea label="Состав" {...form.register("composition")}></Textarea>
                 <Group mt="md">
-                    <Button type="submit" loading={create.isPending || update.isPending}>
+                    <Button type="submit" data-testid="product-submit-button" loading={create.isPending || update.isPending}>
                         {isEdit ? "Сохранить изменения" : "Создать"}
                     </Button>
-                    <Button variant="light" onClick={onClose}>Отмена</Button>
+                    <Button variant="light" data-testid="product-cancel-button" onClick={onClose}>Отмена</Button>
                 </Group>
             </Stack>
         </form>

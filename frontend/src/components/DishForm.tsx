@@ -165,9 +165,9 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
             <Stack gap="md">
                 <Controller name="imgUrls" control={form.control} render={() => <></>}></Controller>
-                <TextInput label="Название блюда (можно !десерт, !суп и т.д.)" {...form.register("name")} error={form.formState.errors.name?.message}></TextInput>
+                <TextInput data-testid="dish-name-input" label="Название блюда (можно !десерт, !суп и т.д.)" {...form.register("name")} error={form.formState.errors.name?.message}></TextInput>
                 <Stack>
-                    <TextInput label="Добавить URL изображения (для добавления в список нажмите Enter!)" value={newImgUrl} onChange={
+                    <TextInput data-testid="dish-imgUrls-input" label="Добавить URL изображения (для добавления в список нажмите Enter!)" value={newImgUrl} onChange={
                         (e) => setNewImgUrl(e.target.value)
                     } onKeyDown={
                         (e) => {
@@ -203,7 +203,7 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
                 </Stack>
                 <Group grow>
                     <Controller control={form.control} name="portionSize" render={({field}) => (
-                        <NumberInput label="Размер порции (г)" value={field.value} onChange={
+                        <NumberInput data-testid="dish-portionSize-input" label="Размер порции (г)" value={field.value} onChange={
                             (x) => {
                                 field.onChange(x === "" ? 300 : x);
                                 getCPFC();
@@ -211,7 +211,7 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
                         }></NumberInput>
                     )}></Controller>
                     <Controller control={form.control} name="category" render={({field}) => (
-                        <Select label="Категория" clearable data={macros.map((m) => ({
+                        <Select data-testid="dish-category-select" label="Категория" clearable data={macros.map((m) => ({
                             value: m.value,
                             label: m.label
                         }))} value={field.value ?? null} placeholder="Авто из названия" onChange={
@@ -227,7 +227,7 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
                     {fields.map((f,i) => (
                         <Group key={f.id} grow align="end">
                             <Controller name={`ingredients.${i}.productId`} control={form.control} render={({ field: f }) => (
-                                <Select label="Продукт" data={prods.map((p) => ({
+                                <Select data-testid="dish-product-select" label="Продукт" data={prods.map((p) => ({
                                     value: String(p.id),
                                     label: p.name
                                 }))} value={String(f.value)} onChange={(val) => {
@@ -236,7 +236,7 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
                                 }}></Select>
                             )}></Controller>
                             <Controller name={`ingredients.${i}.quantity`} control={form.control} render={({ field }) => (
-                                <NumberInput label="Количество (г)" value={field.value} onChange={(val) => {
+                                <NumberInput data-testid="dish-quantity-select" label="Количество (г)" value={field.value} onChange={(val) => {
                                     field.onChange(val === "" ? 100 : val);
                                     getCPFC();
                                 }}></NumberInput>
@@ -249,26 +249,26 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
                             </ActionIcon>
                         </Group>
                     ))}
-                    {form.formState.errors.ingredients?.root?.message && (
-                        <Text c="red">{form.formState.errors.ingredients.root.message}</Text>
+                    {form.formState.errors.ingredients?.message && (
+                        <Text c="red">{form.formState.errors.ingredients.message}</Text>
                     )}
-                    <Button variant="light" leftSection={<IconPlus size={16}></IconPlus>} onClick={() => append({
+                    <Button data-testid="dish-addingredient-button" variant="light" leftSection={<IconPlus size={16}></IconPlus>} onClick={() => append({
                         productId: 0,
                         quantity: 100
                     })}>Добавить продукт</Button>
                 </Stack>
                 <Group grow>
                     <Controller name="calories" control={form.control} render={({ field }) => (
-                        <NumberInput label="Калории (ккал/порция)" value={field.value} onChange={field.onChange}></NumberInput>
+                        <NumberInput data-testid="dish-calories-input" label="Калории (ккал/порция)" value={field.value} onChange={field.onChange}></NumberInput>
                     )}></Controller>
                     <Controller name="protein" control={form.control} render={({ field }) => (
-                        <NumberInput label="Белки (г/порция)" value={field.value} onChange={field.onChange}></NumberInput>
+                        <NumberInput data-testid="dish-protein-input" label="Белки (г/порция)" value={field.value} onChange={field.onChange}></NumberInput>
                     )}></Controller>
                     <Controller name="fats" control={form.control} render={({ field }) => (
-                        <NumberInput label="Жиры (г/порция)" value={field.value} onChange={field.onChange}></NumberInput>
+                        <NumberInput data-testid="dish-fats-input" label="Жиры (г/порция)" value={field.value} onChange={field.onChange}></NumberInput>
                     )}></Controller>
                     <Controller name="carbs" control={form.control} render={({ field }) => (
-                        <NumberInput label="Углеводы (г/порция)" value={field.value} onChange={field.onChange}></NumberInput>
+                        <NumberInput data-testid="dish-carbs-input" label="Углеводы (г/порция)" value={field.value} onChange={field.onChange}></NumberInput>
                     )}></Controller>
                 </Group>
                 <Button variant="outline" onClick={getCPFC}>Пересчитать КБЖУ</Button>
@@ -301,16 +301,17 @@ export const DishForm = ({dish, opened, onClose}: Props) => {
                     <MultiSelect
                         label="Дополнительные флаги (автоматически фильтруются)"
                         data={flagOptions}
+                        data-testid="dish-flags-multiselect"
                         value={field.value}
                         onChange={field.onChange}
                     />
                     );               
                 }}></Controller>
                 <Group justify="flex-end" mt="md">
-                    <Button variant="light" onClick={onClose}>
+                    <Button variant="light" data-testid="dish-cancel-button" onClick={onClose}>
                         Отмена
                     </Button>
-                    <Button type="submit" loading={create.isPending || update.isPending}>
+                    <Button type="submit" data-testid="dish-submit-button" loading={create.isPending || update.isPending}>
                         {isEdit ? "Сохранить изменения" : "Создать блюдо"}
                     </Button>
                 </Group>

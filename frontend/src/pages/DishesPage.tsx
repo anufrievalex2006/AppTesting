@@ -90,7 +90,7 @@ export const DishesPage = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <Button onClick={() => { setEditingDish(null); setModalOpen(true); }}>
+        <Button data-testid="dish-create-button" onClick={() => { setEditingDish(null); setModalOpen(true); }}>
           + Новое блюдо
         </Button>
       </Group>
@@ -111,7 +111,7 @@ export const DishesPage = () => {
             <Table.Tr><Table.Td colSpan={6}>Загрузка...</Table.Td></Table.Tr>
           ) : (
             dishes.map((d) => (
-              <Table.Tr key={d.id} onClick={() => setViewDish(d)}>
+              <Table.Tr key={d.id} data-testid={`dish-row-${d.id}`} onClick={() => setViewDish(d)}>
                 <Table.Td>{d.name}</Table.Td>
                 <Table.Td>{DISH_CATEGORY_LABELS[d.category] || d.category}</Table.Td>
                 <Table.Td>{d.portionSize}</Table.Td>

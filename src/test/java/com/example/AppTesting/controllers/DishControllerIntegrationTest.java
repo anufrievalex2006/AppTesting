@@ -180,7 +180,7 @@ public class DishControllerIntegrationTest {
     class Get {
         @Test
         @DisplayName("GET /{id} - существующий")
-        void getDish_Exists() throws Exception {
+        void getDish_Exists_Returns200() throws Exception {
             Long pid = utils.createProductAndGetId("Рис");
             Long dishId = utils.createSimpleDish(pid, "Каша", 250f, 150f);
 
@@ -229,7 +229,7 @@ public class DishControllerIntegrationTest {
         }
         @Test
         @DisplayName("GET /{id} - несуществующий -> 404")
-        void getDish_NotFound() throws Exception {
+        void getDish_NotFound_Returns404() throws Exception {
             mockMvc.perform(get("/api/dishes/{id}", 999999L))
                     .andExpect(status().isNotFound());
         }

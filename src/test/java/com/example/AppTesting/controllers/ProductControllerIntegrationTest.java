@@ -257,32 +257,36 @@ class ProductControllerIntegrationTest {
 
     // ===================== DELETE =====================
 
-    @Test
-    @DisplayName("DELETE /{id} — неиспользуемый продукт -> 200 OK")
-    void deleteProduct_NotUsedInDishes_Returns200() throws Exception {
-        Long id = utils.createProductAndGetId("Продукт на удаление");
+    @Nested
+    @DisplayName("Удаление продукта")
+    class Delete {
+        @Test
+        @DisplayName("DELETE /{id} — неиспользуемый продукт -> 200 OK")
+        void deleteProduct_NotUsedInDishes_Returns200() throws Exception {
+            Long id = utils.createProductAndGetId("Продукт на удаление");
 
-        mockMvc.perform(delete("/api/products/{id}", id))
-                .andExpect(status().isOk());
+            mockMvc.perform(delete("/api/products/{id}", id))
+                    .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/products/{id}", id))
-                .andExpect(status().isNotFound());
-    }
+            mockMvc.perform(get("/api/products/{id}", id))
+                    .andExpect(status().isNotFound());
+        }
 
-    @Test
-    @DisplayName("DELETE /{id} - используемый продукт -> 409 Conflict")
-    void deleteProduct_UsedInDish_Returns409() throws Exception {
-        Long pid = utils.createProductAndGetId("Используемый продукт");
-        utils.createSimpleDish(pid, "Блюдо с этим продуктом", 300f, 150f);
+        @Test
+        @DisplayName("DELETE /{id} - используемый продукт -> 409 Conflict")
+        void deleteProduct_UsedInDish_Returns409() throws Exception {
+            Long pid = utils.createProductAndGetId("Используемый продукт");
+            utils.createSimpleDish(pid, "Блюдо с этим продуктом", 300f, 150f);
 
-        mockMvc.perform(delete("/api/products/{id}", pid))
-                .andExpect(status().isConflict());
-    }
+            mockMvc.perform(delete("/api/products/{id}", pid))
+                    .andExpect(status().isConflict());
+        }
 
-    @Test
-    @DisplayName("DELETE /{id} — несуществующий id -> 200 ОК (идемпотентное удаление)")
-    void deleteProduct_NotFound_Returns200() throws Exception {
-        mockMvc.perform(delete("/api/products/{id}", 999999L))
-                .andExpect(status().isOk());
+        @Test
+        @DisplayName("DELETE /{id} — несуществующий id -> 200 ОК (идемпотентное удаление)")
+        void deleteProduct_NotFound_Returns200() throws Exception {
+            mockMvc.perform(delete("/api/products/{id}", 999999L))
+                    .andExpect(status().isOk());
+        }
     }
 }
