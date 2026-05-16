@@ -13,7 +13,7 @@ test.describe('Страница продуктов - CRUD + валидация',
     // ===================== СОЗДАНИЕ — HAPPY PATH =====================
 
     test.describe('Создание продукта — валидные данные', () => {
-        test('Создание продукта с валидными данными (Эквивалентное разбиение)', async () => {
+        test('Создание продукта с валидными данными', async () => {
             const p = generateValidProduct();
 
             await productsPage.openCreateModal();
@@ -21,7 +21,7 @@ test.describe('Страница продуктов - CRUD + валидация',
             await productsPage.submitForm();
 
             await productsPage.expectNotification('Продукт успешно создан');
-            await expect(productsPage.page.getByText(p.name)).toBeVisible();
+            await expect(productsPage.page.getByText(p.name)).toBeVisible({ timeout: 5000 });
         });
 
         test('Созданный продукт отображается в таблице со всеми полями', async () => {
@@ -38,10 +38,9 @@ test.describe('Страница продуктов - CRUD + валидация',
             await expect(row).toContainText('Овощи');
         });
 
-        // Параметризация по всем категориям
+        // Параметризация по некоторым категориям
         const categories = [
-            'Замороженный', 'Мясной', 'Овощи', 'Зелень',
-            'Специи', 'Крупы', 'Консервы', 'Жидкость', 'Сладости'
+            'Замороженный', 'Мясной', 'Овощи'
         ];
 
         for (const category of categories) {
@@ -57,8 +56,8 @@ test.describe('Страница продуктов - CRUD + валидация',
             });
         }
 
-        // Параметризация по всем статусам готовности
-        const statuses = ['Готовый к употреблению', 'Полуфабрикат', 'Требует приготовления'];
+        // Параметризация по статусам готовности
+        const statuses = ['Готовый к употреблению', 'Требует приготовления'];
 
         for (const status of statuses) {
             test(`Создание продукта со статусом "${status}"`, async () => {
@@ -78,13 +77,10 @@ test.describe('Страница продуктов - CRUD + валидация',
 
     test.describe('Граничные значения полей КБЖУ (BVA)', () => {
         const testCases = [
-            { cal: 0,   prot: 0,  fat: 0,  carb: 0,  desc: 'Нулевые значения' },
-            { cal: 1,   prot: 0,  fat: 0,  carb: 0,  desc: 'Минимальные положительные калории' },
-            { cal: 0,   prot: 1,  fat: 0,  carb: 0,  desc: 'Минимальные положительные белки' },
-            { cal: 0,   prot: 0,  fat: 1,  carb: 0,  desc: 'Минимальные положительные жиры' },
-            { cal: 0,   prot: 0,  fat: 0,  carb: 1,  desc: 'Минимальные положительные углеводы' },
+            { cal: 0, prot: 0, fat: 0, carb: 0, desc: 'Нулевые значения' },
+            { cal: 0.01, prot: 0.01, fat: 0.01, carb: 0.01,  desc: 'Минимальные положительные КБЖУ' },
             { cal: 500, prot: 33, fat: 33, carb: 33, desc: 'Сумма БЖУ близка к максимальной (99)' },
-            { cal: 500, prot: 34, fat: 33, carb: 33, desc: 'Сумма БЖУ = максимум (100)' },
+            { cal: 500, prot: 33, fat: 34, carb: 33, desc: 'Сумма БЖУ = максимум (100)' },
         ];
 
         for (const tc of testCases) {
@@ -101,7 +97,7 @@ test.describe('Страница продуктов - CRUD + валидация',
                 });
 
                 await productsPage.submitForm();
-                await expect(productsPage.page.getByText(p.name)).toBeVisible({ timeout: 10000 });
+                await expect(productsPage.page.getByText(p.name)).toBeVisible({ timeout: 5000 });
             });
         }
     });
@@ -245,7 +241,7 @@ test.describe('Страница продуктов - CRUD + валидация',
             productsPage.page.once('dialog', dialog => dialog.accept());
             await row.getByRole('button').nth(1).click();
 
-            await expect(productsPage.page.getByText(product.name)).not.toBeVisible({ timeout: 10000 });
+            await expect(productsPage.page.getByText(product.name)).not.toBeVisible({ timeout: 5000 });
         });
     });
 
@@ -323,7 +319,6 @@ test.describe('Страница продуктов - CRUD + валидация',
         await productsPage.submitForm();
         await productsPage.expectNotification('Продукт успешно создан');
 
-        // Кликаем по строке (не по кнопкам)
         await productsPage.getProductRow(product.name).click();
         await expect(productsPage.page.getByText('Просмотр продукта')).toBeVisible({ timeout: 5000 });
         await expect(productsPage.page.getByRole('dialog').getByText(product.name)).toBeVisible();

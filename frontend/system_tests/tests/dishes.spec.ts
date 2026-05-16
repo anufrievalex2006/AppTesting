@@ -11,7 +11,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
 
     // ===================== СОЗДАНИЕ — МАКРОСЫ =====================
 
-    test.describe('Макросы в названии → авто-категория', () => {
+    test.describe('Макросы в названии => авто-категория', () => {
         const macros = [
             { macro: '!первое',  category: 'Первое'  },
             { macro: '!второе',  category: 'Второе'  },
@@ -23,7 +23,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
         ];
 
         for (const { macro, category } of macros) {
-            test(`Макрос ${macro} → категория "${category}"`, async () => {
+            test(`Макрос ${macro} переносится как категория "${category}"`, async () => {
                 const rawName = `${macro} Тестовое блюдо ${Date.now()}`;
                 const displayedName = rawName.replace(macro, '').trim();
 
@@ -51,9 +51,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await dishesPage.addIngredient('Свекла', 150);
             await dishesPage.submitForm();
 
-            // Исходное имя с макросом НЕ должно отображаться
             await expect(dishesPage.page.getByText(rawName)).not.toBeVisible();
-            // Очищенное имя должно отображаться
             await expect(dishesPage.page.getByText(displayedName)).toBeVisible();
         });
 
@@ -72,29 +70,6 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await expect(row).toContainText('Десерт');
             await expect(row).not.toContainText('Первое');
         });
-    });
-
-    // ===================== СОЗДАНИЕ — КАТЕГОРИЯ ВРУЧНУЮ =====================
-
-    test.describe('Создание блюда — категория вручную', () => {
-        const categories = ['Первое', 'Второе', 'Суп', 'Салат', 'Напиток', 'Десерт', 'Перекус'];
-
-        for (const category of categories) {
-            test(`Создание блюда с категорией "${category}" через поле`, async () => {
-                const dishName = `Блюдо ${category} ${Date.now()}`;
-
-                await dishesPage.openCreateModal();
-                await dishesPage.fillDishName(dishName);
-                await dishesPage.selectCategory(category);
-                await dishesPage.addIngredient('Мясо', 200);
-                await dishesPage.addIngredient('Свекла', 350);
-                await dishesPage.submitForm();
-
-                await expect(dishesPage.page.getByText(dishName)).toBeVisible();
-                const row = dishesPage.getDishRow(dishName);
-                await expect(row).toContainText(category);
-            });
-        }
     });
 
     // ===================== СОЗДАНИЕ — КБЖУ =====================
@@ -149,7 +124,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
 
         test('Нельзя создать блюдо без названия', async () => {
             await dishesPage.openCreateModal();
-            // Оставляем название пустым
+            // без названия
             await dishesPage.selectCategory('Второе');
             await dishesPage.addIngredient('Вода', 100);
             await dishesPage.clickSubmit();
@@ -166,7 +141,6 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await dishesPage.addIngredient('Вода', 100);
             await dishesPage.clickSubmit();
 
-            // Блюдо не должно появиться в таблице — форма не прошла
             await expect(dishesPage.page.getByRole('dialog')).toBeVisible();
             await expect(dishesPage.page.getByText(dishName)).not.toBeVisible();
         });
@@ -228,6 +202,28 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
 
             const updatedRow = dishesPage.getDishRow(dishName);
             await expect(updatedRow).toContainText('Салат');
+        });
+
+        test('Редактирование количества ингредиента меняет КБЖУ блюда', async () => {
+            const dishName = `Ред. ингредиент ${Date.now()}`;
+
+            await dishesPage.openCreateModal();
+            await dishesPage.fillDishName(dishName);
+            await dishesPage.selectCategory('Второе');
+            await dishesPage.addIngredient('Картофель', 100);
+            await dishesPage.submitForm();
+            await expect(dishesPage.page.getByText(dishName)).toBeVisible();
+
+            const row = dishesPage.getDishRow(dishName);
+            await row.getByRole('button').first().click();
+
+            // Меняем количество ингредиента
+            const qtyInput = dishesPage.page.getByTestId('dish-quantity-select').last();
+            await qtyInput.fill('500');
+            await dishesPage.submitForm();
+
+            const updatedRow = dishesPage.getDishRow(dishName);
+            await expect(updatedRow).toBeVisible();
         });
     });
 

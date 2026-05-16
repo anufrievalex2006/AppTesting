@@ -23,9 +23,9 @@ export const generateValidProduct = (suffix = ""): TestProduct => ({
 export const generateProductInvalidBJU = (): TestProduct => ({
     name: `Тестовый продукт с некорректным БЖУ ${Date.now()}`,
     calories: 300,
-    protein: 50,
-    fats: 40,
-    carbs: 80,
+    protein: 40,
+    fats: 41,
+    carbs: 20,
     category: 'Мясной',
     status: 'Готовый к употреблению'
 });
