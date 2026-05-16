@@ -10,5 +10,8 @@
 # Лаборатория №2 (юнит-тесты)
 -> src/test/java/com/example/AppTesting/services/DishServiceTest.java
 
-# Лаборатория №3 (интеграционные/API-тесты)
+# Лаборатория №3 (API-тесты)
 -> src/test/java/com/example/AppTesting/controllers/*
+
+# Лаборатория №4 (UI-тесты)
+-> frontend/system_tests/*
