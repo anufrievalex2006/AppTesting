@@ -17,7 +17,7 @@ export const generateValidProduct = (suffix = ""): TestProduct => ({
     carbs: 30,
     category: 'Овощи',
     status: 'Готовый к употреблению',
-    flags: ['VEGAN']
+    flags: ['VEGAN', 'NO_GLUTEN', 'NO_SUGAR']
 });
 
 export const generateProductInvalidBJU = (): TestProduct => ({
@@ -27,5 +27,6 @@ export const generateProductInvalidBJU = (): TestProduct => ({
     fats: 41,
     carbs: 20,
     category: 'Мясной',
-    status: 'Готовый к употреблению'
+    status: 'Готовый к употреблению',
+    flags: ['NO_GLUTEN', 'NO_SUGAR']
 });

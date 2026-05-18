@@ -9,7 +9,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
         await dishesPage.goto("/dishes");
     });
 
-    // ===================== СОЗДАНИЕ — МАКРОСЫ =====================
+    // ===================== СОЗДАНИЕ - МАКРОСЫ =====================
 
     test.describe('Макросы в названии => авто-категория', () => {
         const macros = [
@@ -31,8 +31,6 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
                 await dishesPage.fillDishName(rawName);
                 await dishesPage.addIngredient('Картофель', 250);
                 await dishesPage.submitForm();
-
-                await expect(dishesPage.page.getByText(displayedName)).toBeVisible();
 
                 const row = dishesPage.getDishRow(displayedName);
                 await expect(row).toContainText(category);
@@ -72,7 +70,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
         });
     });
 
-    // ===================== СОЗДАНИЕ — КБЖУ =====================
+    // ===================== СОЗДАНИЕ - КБЖУ =====================
 
     test('Автоматический расчёт КБЖУ по ингредиентам', async () => {
         const dishName = `Тест КБЖУ ${Date.now()}`;
@@ -84,7 +82,6 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
         await dishesPage.submitForm();
 
         await expect(dishesPage.page.getByText(dishName)).toBeVisible();
-        // КБЖУ воды = 0, поэтому в строке должны быть нули
         const row = dishesPage.getDishRow(dishName);
         await expect(row).toContainText('0');
     });
@@ -103,7 +100,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
         await expect(dishesPage.page.getByText(dishName)).toBeVisible();
     });
 
-    // ===================== ВАЛИДАЦИЯ — СОЗДАНИЕ =====================
+    // ===================== ВАЛИДАЦИЯ - СОЗДАНИЕ =====================
 
     test.describe('Валидация при создании', () => {
         test('Нельзя создать блюдо без ингредиентов', async () => {
@@ -133,7 +130,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await expect(dishesPage.page.getByRole('dialog')).toBeVisible();
         });
 
-        test('Нельзя создать блюдо без категории (нет макроса и не выбрана)', async () => {
+        test('Нельзя создать блюдо без категории и макроса', async () => {
             const dishName = `Без категории ${Date.now()}`;
 
             await dishesPage.openCreateModal();
@@ -145,7 +142,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await expect(dishesPage.page.getByText(dishName)).not.toBeVisible();
         });
 
-        test('Отмена создания — блюдо не появляется в таблице', async () => {
+        test('Отмена создания - блюдо не появляется в таблице', async () => {
             const dishName = `Отмена ${Date.now()}`;
 
             await dishesPage.openCreateModal();
@@ -223,7 +220,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await dishesPage.submitForm();
 
             const updatedRow = dishesPage.getDishRow(dishName);
-            await expect(updatedRow).toBeVisible();
+            await expect(updatedRow).toContainText("385 / 10 / 2 / 81.5");
         });
     });
 
@@ -246,7 +243,7 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             dishesPage.page.once('dialog', dialog => dialog.accept());
             await row.getByRole('button').nth(1).click(); // кнопка удаления
 
-            await expect(dishesPage.page.getByText(dishName)).not.toBeVisible({ timeout: 10000 });
+            await expect(dishesPage.page.getByText(dishName)).not.toBeVisible();
         });
     });
 
@@ -269,14 +266,14 @@ test.describe('Страница блюд - CRUD + бизнес-логика', ()
             await expect(dishesPage.page.getByText(dishName)).toBeVisible();
         });
 
-        test('Поиск по несуществующему названию — таблица пустая', async () => {
+        test('Поиск по несуществующему названию - таблица пустая', async () => {
             await dishesPage.page.getByPlaceholder('Введите название...').fill('xyzНесуществующееБлюдо99999');
             await expect(dishesPage.page.getByRole('row').nth(1)).not.toBeVisible().catch(() => {
                 // Допустимо если строк 0 или таблица показывает пустое состояние
             });
         });
 
-        test('Фильтр по категории — показывает только блюда нужной категории', async () => {
+        test('Фильтр по категории - показывает только блюда нужной категории', async () => {
             const dishName = `Фильтр-Десерт ${Date.now()}`;
 
             await dishesPage.openCreateModal();
