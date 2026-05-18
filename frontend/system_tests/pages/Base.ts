@@ -11,11 +11,11 @@ export abstract class BasePage {
             waitUntil: 'networkidle'
         });
     }
-    async expectNotification(messageContains: string, timeout = 1500) {
+    async expectNotification(messageContains: string) {
         await expect(
             this.page.locator('.mantine-Notification-root')
                 .filter({ hasText: messageContains })
                 .first()
-        ).toBeVisible({ timeout });
+        ).toBeVisible();
     }
 }

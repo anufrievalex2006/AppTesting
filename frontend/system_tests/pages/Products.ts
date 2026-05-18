@@ -25,14 +25,12 @@ export class ProductsPage extends BasePage {
     async openCreateModal() {
         await this.createButton().click();
         await expect(this.nameInput()).toBeVisible();
-        // await this.page.waitForTimeout(800);
     }
 
     async selectCategory(categoryLabel: string) {
         const currentValue = await this.categorySelect().inputValue();
         if (currentValue && currentValue.includes(categoryLabel)) return;
         await this.categorySelect().click();
-        // await this.page.waitForTimeout(300);
         await this.page.getByRole('option', { name: categoryLabel, exact: true }).click();
     }
 
@@ -40,7 +38,6 @@ export class ProductsPage extends BasePage {
         const currentValue = await this.statusSelect().inputValue();
         if (currentValue && currentValue.includes(statusLabel)) return;
         await this.statusSelect().click();
-        // await this.page.waitForTimeout(300);
         await this.page.getByRole('option', { name: statusLabel }).click();
     }
 
@@ -54,23 +51,16 @@ export class ProductsPage extends BasePage {
         status?: string;
     }) {
         await this.nameInput().fill(product.name);
-        // await this.page.waitForTimeout(400);
         await this.caloriesInput().fill(product.calories.toString());
-        // await this.page.waitForTimeout(300);
         await this.proteinInput().fill(product.protein.toString());
-        // await this.page.waitForTimeout(300);
         await this.fatsInput().fill(product.fats.toString());
-        // await this.page.waitForTimeout(300);
         await this.carbsInput().fill(product.carbs.toString());
-        // await this.page.waitForTimeout(800);
 
         if (product.category) {
             await this.selectCategory(product.category);
-            // await this.page.waitForTimeout(300);
         }
         if (product.status) {
             await this.selectStatus(product.status);
-            // await this.page.waitForTimeout(300);
         }
     }
 
